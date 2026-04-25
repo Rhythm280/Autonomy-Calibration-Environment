@@ -31,7 +31,7 @@ class Observation(BaseModel):
 class Reward(BaseModel):
     # OpenEnv v2 requirement: scores strictly in (0.01, 0.99)
     value: float = Field(..., ge=0.01, le=0.99)
-    breakdown: dict[str, float] = Field(default_factory=dict)
+    breakdown: dict[str, Any] = Field(default_factory=dict)
     raw: float = 0.0
 
 

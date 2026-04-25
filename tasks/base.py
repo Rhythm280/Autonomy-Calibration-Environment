@@ -1,9 +1,9 @@
-"""tasks/base.py — Abstract base class for all task implementations."""
 from __future__ import annotations
 from abc import ABC, abstractmethod
+from openenv.core.env_server.interfaces import Environment
 
 
-class BaseTask(ABC):
+class BaseTask(Environment, ABC):
     task_id: str = "base"
     max_steps: int = 5
 

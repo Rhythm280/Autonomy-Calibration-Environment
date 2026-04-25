@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "epistemic-agency-hub"
+version = "2.0.0"
+description = "Autonomy Calibration Hub for Epistemic Agency Training (OpenEnv India Hackathon 2026)"
+requires-python = ">=3.10"
+dependencies = [
+    "openenv-core>=0.2.2",
+    "fastapi>=0.111.0",
+    "uvicorn>=0.29.0",
+    "pydantic>=2.9.0",
+    "python-multipart>=0.0.9",
+    "jinja2>=3.1.3",
+    "requests>=2.31.0",
+    "trl>=0.8.6",
+    "transformers>=4.40.0",
+    "torch>=2.2.0",
+]
+
+[project.scripts]
+server = "main:main"
+
+[tool.setuptools]
+packages = ["environment", "tasks"]
+py-modules = ["main", "models", "utils", "database", "client"]

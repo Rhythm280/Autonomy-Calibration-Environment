@@ -8,6 +8,8 @@ from typing import Optional
 
 from environment.scenarios import SCENARIOS, validate_decision
 from environment.rewards import compute_total_reward
+from utils import clamp
+from models import Action, Observation, Reward
 
 
 def build_observation(scenario: dict, step: int, episode_done: bool = False) -> dict:
@@ -86,9 +88,16 @@ def parse_decision(model_output: str) -> Optional[str]:
     return None
 
 
-class AutonomyCalibrationEnv:
+try:
+    from openenv.core.env_server.interfaces import Environment
+except ImportError:
+    # Fallback for environments where openenv is not yet installed
+    class Environment:
+        pass
+
+class AutonomyCalibrationEnv(Environment):
     """
-    OpenEnv-compatible RL environment for training AI agents
+    OpenEnv-compliant RL environment for training AI agents
     to calibrate their autonomy decisions.
 
     Action space:   ACT | ASK | STOP | RECOVER
@@ -108,22 +117,31 @@ class AutonomyCalibrationEnv:
         self._episode_count = 0
         self._done = False
 
-    def reset(self) -> dict:
-        """Start a new episode. Returns initial observation and prompt."""
+    def reset(self, seed: Optional[int] = None) -> Observation:
+        """Start a new episode. Returns initial observation."""
+        if seed is not None:
+            random.seed(seed)
+            
         self._current_scenario = copy.deepcopy(random.choice(self.scenarios))
         self._step_count = 0
         self._done = False
         self._episode_count += 1
 
-        obs = build_observation(self._current_scenario, step=self._step_count)
-        return {
-            "observation": obs,
-            "prompt": build_prompt(obs),
-            "scenario_id": self._current_scenario["id"],
-            "category": self._current_scenario["category"],
-        }
+        obs_dict = build_observation(self._current_scenario, step=self._step_count)
+        return Observation(
+            task_id=self._current_scenario["id"],
+            step=self._step_count,
+            state={"context": self._current_scenario["context"]},
+            available_actions=["ACT", "ASK", "STOP", "RECOVER"],
+            done=False,
+            prompt=build_prompt(obs_dict),
+            seed=seed,
+            context=self._current_scenario["context"],
+            task=self._current_scenario["task"],
+            action_to_evaluate=self._current_scenario["action_to_evaluate"]
+        )
 
-    def step(self, action: str) -> dict:
+    def step(self, action: str) -> tuple[Observation, Reward, bool, dict]:
         """Take one step. action = model's raw text output."""
         if self._done:
             raise RuntimeError("Episode is done. Call reset() first.")
@@ -161,28 +179,50 @@ class AutonomyCalibrationEnv:
             episode_bonus = -3.0
 
         reward_result["episode_bonus"] = episode_bonus
-        reward_result["total"] = round(reward_result["total"] + episode_bonus, 2)
+        raw_total = reward_result["total"] + episode_bonus
+        
+        # Scale raw_total [-15, 15] -> [0.01, 0.99] before clamping
+        # formula: 0.5 + (raw / 30.0) * 0.98
+        scaled_reward = 0.5 + (raw_total / 30.0) * 0.98
+        final_reward = clamp(scaled_reward)
+
+        reward_result["raw_total"] = round(raw_total, 2)
+        reward_result["total"] = final_reward
 
         self._step_count += 1
         self._done = True
 
-        obs = build_observation(scenario, self._step_count, episode_done=True)
+        obs_dict = build_observation(scenario, self._step_count, episode_done=True)
+        # Convert to Pydantic Observation
+        obs = Observation(
+            task_id=scenario["id"],
+            step=self._step_count,
+            state={"context": scenario["context"]},
+            available_actions=["ACT", "ASK", "STOP", "RECOVER"],
+            done=True,
+            prompt=build_prompt(obs_dict),
+            context=scenario["context"],
+            task=scenario["task"],
+            action_to_evaluate=scenario["action_to_evaluate"]
+        )
 
-        return {
-            "observation": obs,
-            "reward": reward_result["total"],
-            "reward_breakdown": reward_result,
-            "done": True,
-            "info": {
-                "scenario_id": scenario["id"],
-                "category": scenario["category"],
-                "decision": decision,
-                "best_decision": scenario["best_decision"],
-                "acceptable_decisions": scenario["acceptable_decisions"],
-                "verdict": reward_result["verdict"],
-                "raw_output_preview": action[:200],
-            },
+        reward_obj = Reward(
+            value=final_reward,
+            breakdown=reward_result,
+            raw=raw_total
+        )
+
+        info = {
+            "scenario_id": scenario["id"],
+            "category": scenario["category"],
+            "decision": decision,
+            "best_decision": scenario["best_decision"],
+            "acceptable_decisions": scenario["acceptable_decisions"],
+            "verdict": reward_result["verdict"],
+            "episode_score": final_reward,
         }
+
+        return obs, reward_obj, True, info
 
     def state(self) -> dict:
         """Return current environment state. Required by OpenEnv."""
@@ -217,14 +257,14 @@ if __name__ == "__main__":
     for i in range(n_episodes):
         reset_out = env.reset()
         fake_output = f"Thinking about the situation...\nDECISION: {env.sample_random_action()}"
-        step_out = env.step(fake_output)
-        total_reward += step_out["reward"]
+        obs, reward_obj, done, info = env.step(fake_output)
+        total_reward += reward_obj.value
         print(
-            f"Ep {i+1:2d} | {reset_out['scenario_id']:8} | "
-            f"Decision: {step_out['info']['decision']:8} | "
-            f"Best: {step_out['info']['best_decision']:8} | "
-            f"Reward: {step_out['reward']:+.2f} | "
-            f"{step_out['info']['verdict']}"
+            f"Ep {i+1:2d} | {info['scenario_id']:8} | "
+            f"Decision: {info['decision']:8} | "
+            f"Best: {info['best_decision']:8} | "
+            f"Reward: {reward_obj.value:+.4f} | "
+            f"{info['verdict']}"
         )
 
     avg = total_reward / n_episodes

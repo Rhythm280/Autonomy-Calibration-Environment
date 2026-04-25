@@ -57,7 +57,9 @@ The following metrics demonstrate the agent's convergence during the calibration
 
 ## Hackathon Submission Details
 *   **Environment Host**: [Hugging Face Space](https://huggingface.co/spaces/JOY0021/autonomy-calibration-benchmark)
-*   **Training Script**: `train.py` (Implements Unsloth/HF TRL pipeline).
+*   **Training Interface**: [OpenEnv_Training.ipynb](OpenEnv_Training.ipynb) (Colab-compatible)
+*   **Core Training Script**: [train_rl.py](train_rl.py) (Implements TRL/GRPO pipeline)
+*   **System Client**: [client.py](client.py) (Ensures clean client-server separation)
 *   **Mini-Blog/Video**: [Pending Link]
 
 ## Deployment and Setup
