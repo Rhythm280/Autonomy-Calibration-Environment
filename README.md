@@ -1,79 +1,97 @@
----
-title: Autonomy Calibration Benchmark
-emoji: 🛡️
-colorFrom: blue
-colorTo: indigo
-sdk: docker
-pinned: false
-app_port: 7860
----
+# 🧠 Epistemic Agency Hub: Autonomy Calibration Environment
+### *OpenEnv India Hackathon 2026 — Submission*
 
-# 🛡️ Autonomy Calibration Benchmark (OpenEnv v2)
+[![Hugging Face Space](https://img.shields.io/badge/%F0%9F%A4%97%20Hosted-HF%20Spaces-yellow)](#[YOUR_HF_SPACE_URL])
+[![Framework](https://img.shields.io/badge/Powered%20By-OpenEnv-blue)](https://github.com/openenv/openenv)
 
-> **"It is not enough to be right; an agent must also know when it is blind."**
-
-### 🏆 The Vision
-Standard LLM benchmarks test **knowledge**. Our environment tests **judgment**. 
-
-In the real world, autonomous agents (Finance, DevOps, Healthcare) operate under **partial observability**. A winning agent shouldn't just "act"; it must decide if it has enough information to proceed or if it needs to **INVESTIGATE**.
-
-This is the **Autonomy Calibration Benchmark** — the first OpenEnv-compliant environment dedicated to training agents on **Epistemic Uncertainty**.
+## 📋 Table of Contents
+- [The Problem: Epistemic Agency](#-the-problem-epistemic-agency)
+- [Environment Innovation](#-environment-innovation)
+- [System Architecture](#-system-architecture)
+- [Training & Metrics](#-training--metrics)
+- [Minimum Submission Requirements](#-minimum-submission-requirements)
+- [Getting Started](#-getting-started)
 
 ---
 
-### 🚀 Innovation: Partially Observable World Modeling
-Unlike static classification tasks, our environment forces agents to manage **information cost vs. decision risk**.
+## 🎯 The Problem: Epistemic Agency
+Most LLM agents suffer from "over-confidence bias"—they try to execute complex tasks even when the scenario is ambiguous or dangerous. **Epistemic Agency** is the capability of an agent to recognize its own knowledge limits. 
 
-- **Hidden Metadata**: Critical red flags (e.g., suspicious IP, shell companies, OOM logs) are **LOCKED** behind the `investigate` action.
-- **Universal INVESTIGATE Action**: Agents can pay a small reward penalty (-0.05) to reveal deep scan metadata.
-- **Calibration Reward Shaping**: Agents that make "Blind Approvals" of high-risk transactions are severely penalized, even if they guess correctly. We reward **Informed Certainty**.
-
----
-
-### 🏗️ Three Stakes-Based Tasks
-
-| Task | Domain | Challenge | Difficulty |
-| :--- | :--- | :--- | :--- |
-| **Email Triage** | Personal Assistant | Detect phishing with masked domains and headers. | Easy |
-| **DevOps Incident** | Enterprise | Firefight production outages with hidden root-cause logs. | Medium |
-| **Financial Fraud** | Compliance/Banking | Approve/Flag transfers with hidden beneficiary history. | **Hard** |
+The **Autonomy Calibration Environment** trains agents to decide:
+1. **ACT**: Proceed when the path is clear.
+2. **ASK**: Request clarification when the prompt is ambiguous.
+3. **STOP**: Halt when the task is ethically or technically impossible.
+4. **RECOVER**: Switch to a safe-mode when a failure occurs.
 
 ---
 
-### 📊 Training with GRPO (Policy Improvement)
-We use **Group Relative Policy Optimization (GRPO)** to train the agent to "stop and think." 
-
-- **State Space**: Observations from the FastAPI server.
-- **Action Space**: Multi-turn decisions including `investigate`, `ACT`, `ASK`, and `STOP`.
-- **Evidence**: Real training plots (Reward vs. Baseline) are generated in the notebooks.
-
-🔗 **[Open Colab Notebook](https://colab.research.google.com/...)** | 🔗 **[Explore the API](https://huggingface.co/spaces/JOY0021/autonomy-calibration-benchmark)**
+## 💡 Environment Innovation (40% Weight)
+Unlike static benchmarks, this environment uses a **Dynamic Calibration Rubric**. 
+- **Novelty**: It doesn't just grade "correctness"; it grades the *justification* for autonomy.
+- **Challenge**: The agent is presented with "Edge-Case Scenarios" where the conventionally "correct" action is actually to STOP or ASK, testing the agent's calibration against hallucination.
+- **Complexity**: Real-time evaluation of state safety and epistemic uncertainty.
 
 ---
 
-### 🛠️ OpenEnv Compliance (v2.0.0)
-- ✅ **Strict Reward Clamping**: All rewards are `0.01 → 0.99`.
-- ✅ **Standard Endpoints**: `/api/reset`, `/api/step`, `/api/state`, `/api/episodes`.
-- ✅ **Deterministic Seeds**: Full reproducibility via `seed` parameter in reset.
-- ✅ **Logging**: SQLite-backed episode replay store.
+## 🎨 Storytelling: The Dashboard (30% Weight)
+We built a premium **Midnight Pro Dashboard** to visualize the agent's decision-making process.
+- **Sandbox Monitor**: Real-time trajectory tracking and reward pulsing.
+- **Training Pulse**: Live visualization of the optimization gradient (Loss vs. Reward).
+- **Interactive Evaluation**: Human-in-the-loop overrides to test agent robustness.
+
+> [!TIP]
+> **View the Demo**: [Click here for the YouTube/HF Video](#) (Insert your video link here)
 
 ---
 
-### 📁 Project Structure
+## 📈 Training & Metrics (20% Weight)
+We demonstrate measurable improvement using a policy gradient approach.
+- **Baseline**: Untrained models consistently over-act (High Autonomy, Low Safety).
+- **Trained Agent**: The model learns to "calibrate," increasing the usage of **ASK** and **STOP** in high-uncertainty zones.
+
+### Training Rewards Plot
+![Reward Curve](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/plots/reward_curve.png)
+
+---
+
+## 🛠 Reward & Training Pipeline (10% Weight)
+Our reward model uses a **Compositional Rubric**:
+- **Safety Penalty**: Heavy negative reward for ACTing in unsafe states.
+- **Ambiguity Bonus**: Positive reward for ASKing when prompt entropy is high.
+- **Efficiency Multiplier**: Rewards reaching the goal with minimal redundant steps.
+
+---
+
+## ✅ Minimum Submission Requirements
+| Requirement | Status | Link |
+| :--- | :--- | :--- |
+| **OpenEnv Usage** | ✅ Verified | [openenv.yaml](file:///Users/joy/Desktop/RL%20Learning%20Environment/autonomy-calibration-env/openenv.yaml) |
+| **Training Script** | ✅ Ready | [train.py](file:///Users/joy/Desktop/RL%20Learning%20Environment/autonomy-calibration-env/train.py) |
+| **Hugging Face Space** | ⏳ Pending | [Link to HF Space](#) |
+| **Video/Blog** | ⏳ Pending | [Link to Video/Blog](#) |
+
+---
+
+## 🚀 Getting Started
+
+### 1. Build & Run
 ```bash
-├── main.py                # FastAPI OpenEnv Server
-├── tasks/                 # Task Logic (Partial Observability Engines)
-├── environment/           # Core RL Loop & Scenarios
-├── models.py              # OpenEnv V2 Pydantic Contracts
-├── openenv.yaml           # Hackathon Metadata
-└── visualize.py           # Training Plot Generator
+# Install dependencies
+pip install -r requirements.txt
+
+# Start the Hub
+uvicorn main:app --port 7860
 ```
 
+### 2. Run Training
+```bash
+python3 train.py
+```
+
+### 3. Deploy to HF Spaces
+1. Create a "Docker" space on Hugging Face.
+2. Push this repository.
+3. Set `ENV_PORT=7860` in Space secrets.
+
 ---
-
-### 🎯 Why This Wins
-1. **Novelty**: It’s the only OpenEnv submission tackling **Autonomy Calibration**.
-2. **Technical Depth**: Uses **Partial Observability**—moving beyond "shallow next-token reasoning."
-3. **Utility**: Directly applicable to enterprise agent safety (Financial Fraud, DevOps).
-
-**Author**: Rhythm | **Version**: 2.0.0 | **Hackathon**: OpenEnv India 2026
+**Team [Your Team Name]** | *India 2026 OpenEnv Hackathon*
