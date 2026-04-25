@@ -56,17 +56,17 @@ We trained a **Qwen-2.5-0.5B** agent using the **GRPO** algorithm (TRL implement
 ### Performance Delta
 The trained agent successfully learns the **"Cost of Certainty"**, outperforming the blind baseline by recognizing when to pay for investigation.
 
-![Baseline Comparison](plots/baseline_vs_trained.png)
+![Baseline Comparison](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/plots/baseline_vs_trained.png)
 
 ### Training Dynamics
 The reward curve shows a distinct upward trend as the policy shifts from "greedy acting" to "strategic investigation."
 
-![Reward Curve](plots/reward_curve.png)
+![Reward Curve](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/plots/reward_curve.png)
 
 ### Emerging Epistemic Gating
 As entropy increases in the visible signal, the trained policy exhibits a non-linear spike in investigation behavior—proving it has internalized the risk-calibration boundary.
 
-![Behavior Analysis](plots/investigate_behavior.png)
+![Behavior Analysis](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/plots/investigate_behavior.png)
 
 ---
 
