@@ -1,3 +1,13 @@
+---
+title: Autonomy Calibration Benchmark
+emoji: 🛡️
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+pinned: false
+app_port: 7860
+---
+
 # 🛡️ Autonomy Calibration Benchmark (OpenEnv v2)
 
 > **"It is not enough to be right; an agent must also know when it is blind."**
