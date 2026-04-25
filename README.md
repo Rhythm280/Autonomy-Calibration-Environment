@@ -1,98 +1,81 @@
-# 🧠 Epistemic Agency Hub: Autonomy Calibration Environment
-### *OpenEnv India Hackathon 2026 — Submission*
-
-[![Hugging Face Space](https://img.shields.io/badge/%F0%9F%A4%97%20Hosted-HF%20Spaces-yellow)](#[YOUR_HF_SPACE_URL])
-[![Framework](https://img.shields.io/badge/Powered%20By-OpenEnv-blue)](https://github.com/openenv/openenv)
-
-## 📋 Table of Contents
-- [The Problem: Epistemic Agency](#-the-problem-epistemic-agency)
-- [Environment Innovation](#-environment-innovation)
-- [System Architecture](#-system-architecture)
-- [Training & Metrics](#-training--metrics)
-- [Minimum Submission Requirements](#-minimum-submission-requirements)
-- [Getting Started](#-getting-started)
-
+---
+title: Autonomy Calibration Hub
+emoji: 🧠
+colorFrom: indigo
+colorTo: blue
+sdk: docker
+pinned: false
+app_port: 7860
 ---
 
-## 🎯 The Problem: Epistemic Agency
-Most LLM agents suffer from "over-confidence bias"—they try to execute complex tasks even when the scenario is ambiguous or dangerous. **Epistemic Agency** is the capability of an agent to recognize its own knowledge limits. 
+# Epistemic Agency Hub: Autonomy Calibration Environment
+### OpenEnv India Hackathon 2026 Submission
 
-The **Autonomy Calibration Environment** trains agents to decide:
-1. **ACT**: Proceed when the path is clear.
-2. **ASK**: Request clarification when the prompt is ambiguous.
-3. **STOP**: Halt when the task is ethically or technically impossible.
-4. **RECOVER**: Switch to a safe-mode when a failure occurs.
+## Project Overview
+The Epistemic Agency Hub is a specialized reinforcement learning benchmark designed to evaluate an agent's ability to manage uncertainty through calibrated autonomy. Unlike traditional RL agents that only optimize for task execution, our environment mandates "Epistemic Actions"—specifically the 'INVESTIGATE' behavior—where an agent must resolve informational gaps before committing to high-stakes decisions.
 
----
+## Core Framework: Investigate-then-Act
+The environment implements a calibration-first workflow:
+1. **Uncertainty Identification**: The agent receives a state with ambiguous or incomplete data.
+2. **Epistemic Phase**: The agent must decide whether to 'INVESTIGATE' (resolving uncertainty at a cost) or 'ACT' (committing to a decision).
+3. **Calibrated Action**: Success is measured by the agent's ability to minimize investigation costs while maximizing decision accuracy.
 
-## 💡 Environment Innovation (40% Weight)
-Unlike static benchmarks, this environment uses a **Dynamic Calibration Rubric**. 
-- **Novelty**: It doesn't just grade "correctness"; it grades the *justification* for autonomy.
-- **Challenge**: The agent is presented with "Edge-Case Scenarios" where the conventionally "correct" action is actually to STOP or ASK, testing the agent's calibration against hallucination.
-- **Complexity**: Real-time evaluation of state safety and epistemic uncertainty.
+## Technical Implementation
 
----
+### Environment and Agent Behavior
+*   **OpenEnv Compliance**: Fully compliant with the latest OpenEnv API specifications.
+*   **Action Space**:
+    *   `INVESTIGATE`: Queries the internal knowledge base to reduce state entropy.
+    *   `ACT`: Executes the final decision based on current belief state.
+    *   `RECOVER`: Error-handling mechanism for miscalibrated decisions.
+*   **State Management**: Transient state variables track the confidence level and informational completeness of the agent throughout the trajectory.
 
-## 🎨 Storytelling: The Dashboard (30% Weight)
-We built a premium **Midnight Pro Dashboard** to visualize the agent's decision-making process.
-- **Sandbox Monitor**: Real-time trajectory tracking and reward pulsing.
-- **Training Pulse**: Live visualization of the optimization gradient (Loss vs. Reward).
-- **Interactive Evaluation**: Human-in-the-loop overrides to test agent robustness.
+### Reward Model and Training
+We utilize a Group Relative Policy Optimization (GRPO) approach to calibrate the agent's decision-making logic:
+*   **Causal Merit Reward**: Rewards are distributed for successful investigation steps that directly lead to higher action accuracy.
+*   **Calibration Penalty**: Large penalties are applied for "over-confident" actions taken while state uncertainty is high.
+*   **Efficiency Bonus**: Incentivizes reaching a confident state with the minimum number of investigation steps.
 
-> [!TIP]
-> **View the Demo**: [Click here for the YouTube/HF Video](#) (Insert your video link here)
+### Training Pipeline
+The training pipeline is designed for scalability and observability:
+*   **Real-Time Monitoring**: Integrated with the Midnight Pro Dashboard for live tracking of loss gradients and reward pulses.
+*   **Dataset Integration**: Automated dataset generation and upload to Hugging Face Hub using `HF_TOKEN`.
 
----
+## Performance Analytics
 
-## 📈 Training & Metrics (20% Weight)
-We demonstrate measurable improvement using a policy gradient approach.
-- **Baseline**: Untrained models consistently over-act (High Autonomy, Low Safety).
-- **Trained Agent**: The model learns to "calibrate," increasing the usage of **ASK** and **STOP** in high-uncertainty zones.
+### Reward Pulse and Loss Gradient
+The following metrics demonstrate the agent's convergence during the calibration phase:
 
-### Training Rewards Plot
-*(Placeholder: Embed your saved Loss/Reward plot from `train.py` here)*
-![Reward Curve](https://via.placeholder.com/800x400?text=Reward+Improvement+Curve)
+![Reward Curve](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/reward_curve.png)
+*Figure 1: Mean expected reward across training epochs, showing a steady increase as the agent learns to prioritize investigation over premature action.*
 
----
+![Loss Curve](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/loss_curve.png)
+*Figure 2: GRPO loss gradient stabilization, indicating robust policy convergence.*
 
-## 🛠 Reward & Training Pipeline (10% Weight)
-Our reward model uses a **Compositional Rubric**:
-- **Safety Penalty**: Heavy negative reward for ACTing in unsafe states.
-- **Ambiguity Bonus**: Positive reward for ASKing when prompt entropy is high.
-- **Efficiency Multiplier**: Rewards reaching the goal with minimal redundant steps.
+### Comparative Behavior Analysis
+![Inference Baseline](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/baseline_vs_trained.png)
+*Figure 3: Behavior comparison between a standard greedy agent and the calibrated Epistemic Agent.*
 
----
+## Hackathon Submission Details
+*   **Environment Host**: [Hugging Face Space](https://huggingface.co/spaces/JOY0021/autonomy-calibration-benchmark)
+*   **Training Script**: `train.py` (Implements Unsloth/HF TRL pipeline).
+*   **Mini-Blog/Video**: [Pending Link]
 
-## ✅ Minimum Submission Requirements
-| Requirement | Status | Link |
-| :--- | :--- | :--- |
-| **OpenEnv Usage** | ✅ Verified | [openenv.yaml](file:///Users/joy/Desktop/RL%20Learning%20Environment/autonomy-calibration-env/openenv.yaml) |
-| **Training Script** | ✅ Ready | [train.py](file:///Users/joy/Desktop/RL%20Learning%20Environment/autonomy-calibration-env/train.py) |
-| **Hugging Face Space** | ⏳ Pending | [Link to HF Space](#) |
-| **Video/Blog** | ⏳ Pending | [Link to Video/Blog](#) |
+## Deployment and Setup
+The environment is containerized using Docker for seamless deployment on Hugging Face Spaces.
 
----
-
-## 🚀 Getting Started
-
-### 1. Build & Run
+### Local Development
+To run the dashboard locally:
 ```bash
-# Install dependencies
 pip install -r requirements.txt
-
-# Start the Hub
 uvicorn main:app --port 7860
 ```
 
-### 2. Run Training
+### Building for Production
 ```bash
-python3 train.py
+docker build -t autonomy-calibration-hub .
+docker run -p 7860:7860 autonomy-calibration-hub
 ```
 
-### 3. Deploy to HF Spaces
-1. Create a "Docker" space on Hugging Face.
-2. Push this repository.
-3. Set `ENV_PORT=7860` in Space secrets.
-
----
-**Team [Your Team Name]** | *India 2026 OpenEnv Hackathon*
+## License
+MIT License - OpenEnv India 2026.
