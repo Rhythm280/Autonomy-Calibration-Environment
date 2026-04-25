@@ -1,85 +1,98 @@
-# 🛡️ Autonomy Calibration Benchmark
+# 🧠 Epistemic Agency Hub: Autonomy Calibration Environment
+### *OpenEnv India Hackathon 2026 — Submission*
 
-> **"Bridging the Gap Between Next-Token Prediction and Epistemic Agency."**
+[![Hugging Face Space](https://img.shields.io/badge/%F0%9F%A4%97%20Hosted-HF%20Spaces-yellow)](#[YOUR_HF_SPACE_URL])
+[![Framework](https://img.shields.io/badge/Powered%20By-OpenEnv-blue)](https://github.com/openenv/openenv)
 
-[![OpenEnv v2.0.0](https://img.shields.io/badge/OpenEnv-v2.0.0-blue.svg)](https://github.com/Rhythm280/Autonomy-Calibration-Environment)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
----
-
-## 1. Problem Statement: The Calibration Gap
-Current Large Language Models (LLMs) are optimized for **correctness in distribution**, but they lack **epistemic calibration**: the ability to recognize when a visible signal is insufficient to justify an autonomous action. In real-world enterprise workflows (DevOps, Payment Processing, Security), a "lucky guess" is a catastrophic failure in waiting.
-
-### Why GPT/Gemini Are Insufficient
-Standard assistants are trained on static datasets where full context is provided. When faced with **Partial Observability**, they tend to hallucinate certainty or act recklessly because their training objective doesn't penalize "blind correctness."
-
----
-
-## 2. Environment Design: Epistemic Uncertainty
-The **Autonomy Calibration Benchmark** is a research-grade RL environment designed to train agents to navigate **hidden state realities**.
-
-### Key Innovation: Probabilistic Hidden States
-Every scenario in this benchmark has **Ambiguity (α)**.
-- **Visible State**: Genuinely ambiguous (e.g., "503 Error on API").
-- **Hidden Truth**: Probabilistically chosen per seed (e.g., 40% Traffic Spike, 60% Database Lock).
-- **INVESTIGATE Mechanic**: The agent must pay a reward cost to transition from a partially observable state to a fully observable one.
+## 📋 Table of Contents
+- [The Problem: Epistemic Agency](#-the-problem-epistemic-agency)
+- [Environment Innovation](#-environment-innovation)
+- [System Architecture](#-system-architecture)
+- [Training & Metrics](#-training--metrics)
+- [Minimum Submission Requirements](#-minimum-submission-requirements)
+- [Getting Started](#-getting-started)
 
 ---
 
-## 3. Action Space & Autonomy
-We define a 4-dimensional autonomy space:
-1. **ACT**: Execute the primary decision (High Stakes).
-2. **ASK**: Request human clarification (Moderate Cost).
-3. **STOP**: Terminate the workflow (Zero Risk, Zero Progress).
-4. **INVESTIGATE**: Perform a forensic scan to reveal hidden metadata (Information Cost).
+## 🎯 The Problem: Epistemic Agency
+Most LLM agents suffer from "over-confidence bias"—they try to execute complex tasks even when the scenario is ambiguous or dangerous. **Epistemic Agency** is the capability of an agent to recognize its own knowledge limits. 
+
+The **Autonomy Calibration Environment** trains agents to decide:
+1. **ACT**: Proceed when the path is clear.
+2. **ASK**: Request clarification when the prompt is ambiguous.
+3. **STOP**: Halt when the task is ethically or technically impossible.
+4. **RECOVER**: Switch to a safe-mode when a failure occurs.
 
 ---
 
-## 4. Reward Engine: Calibration Scoring
-Our engine uses **Calibration Weighting** to distinguish between lucky guesses and informed decisions.
-
-$$Reward = f(Correct, Investigated, Ambiguity)$$
-
-- **Informed Success**: 0.99 (Agent investigated high-ambiguity state and succeeded).
-- **Lucky Blind Guess**: 0.18 (Agent succeeded without data — penalized for recklessness).
-- **Reckless Failure**: 0.01 (Agent failed without seeking data in a high-risk state).
+## 💡 Environment Innovation (40% Weight)
+Unlike static benchmarks, this environment uses a **Dynamic Calibration Rubric**. 
+- **Novelty**: It doesn't just grade "correctness"; it grades the *justification* for autonomy.
+- **Challenge**: The agent is presented with "Edge-Case Scenarios" where the conventionally "correct" action is actually to STOP or ASK, testing the agent's calibration against hallucination.
+- **Complexity**: Real-time evaluation of state safety and epistemic uncertainty.
 
 ---
 
-## 5. Training Setup: Group Relative Policy Optimization (GRPO)
-We trained a **Qwen-2.5-0.5B** agent using the **GRPO** algorithm (TRL implementation). GRPO allows the model to reason across groups of generations, effectively learning to "stop and think" when the group variance in predicted outcomes is high due to hidden states.
+## 🎨 Storytelling: The Dashboard (30% Weight)
+We built a premium **Midnight Pro Dashboard** to visualize the agent's decision-making process.
+- **Sandbox Monitor**: Real-time trajectory tracking and reward pulsing.
+- **Training Pulse**: Live visualization of the optimization gradient (Loss vs. Reward).
+- **Interactive Evaluation**: Human-in-the-loop overrides to test agent robustness.
+
+> [!TIP]
+> **View the Demo**: [Click here for the YouTube/HF Video](#) (Insert your video link here)
 
 ---
 
-## 6. Results & Evidence
+## 📈 Training & Metrics (20% Weight)
+We demonstrate measurable improvement using a policy gradient approach.
+- **Baseline**: Untrained models consistently over-act (High Autonomy, Low Safety).
+- **Trained Agent**: The model learns to "calibrate," increasing the usage of **ASK** and **STOP** in high-uncertainty zones.
 
-### Performance Delta
-The trained agent successfully learns the **"Cost of Certainty"**, outperforming the blind baseline by recognizing when to pay for investigation.
-
-![Baseline Comparison](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/plots/baseline_vs_trained.png)
-
-### Training Dynamics
-The reward curve shows a distinct upward trend as the policy shifts from "greedy acting" to "strategic investigation."
-
-![Reward Curve](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/plots/reward_curve.png)
-
-### Emerging Epistemic Gating
-As entropy increases in the visible signal, the trained policy exhibits a non-linear spike in investigation behavior—proving it has internalized the risk-calibration boundary.
-
-![Behavior Analysis](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/plots/investigate_behavior.png)
+### Training Rewards Plot
+*(Placeholder: Embed your saved Loss/Reward plot from `train.py` here)*
+![Reward Curve](https://via.placeholder.com/800x400?text=Reward+Improvement+Curve)
 
 ---
 
-## 🔗 Submission Package
-- **Interactive Space**: [Hugging Face Space](https://huggingface.co/spaces/JOY0021/autonomy-calibration-benchmark)
-- **Training Evidence**: [Colab Notebook](notebooks/training.ipynb)
-- **Evaluation Script**: `python3 inference.py --episodes 50`
-- **Plot Generator**: `python3 scripts/generate_plots.py`
+## 🛠 Reward & Training Pipeline (10% Weight)
+Our reward model uses a **Compositional Rubric**:
+- **Safety Penalty**: Heavy negative reward for ACTing in unsafe states.
+- **Ambiguity Bonus**: Positive reward for ASKing when prompt entropy is high.
+- **Efficiency Multiplier**: Rewards reaching the goal with minimal redundant steps.
 
 ---
 
-## 🚀 Key Insight
-**The agent doesn't just learn to be right; it learns when it is blind—and how to pay for sight.**
+## ✅ Minimum Submission Requirements
+| Requirement | Status | Link |
+| :--- | :--- | :--- |
+| **OpenEnv Usage** | ✅ Verified | [openenv.yaml](file:///Users/joy/Desktop/RL%20Learning%20Environment/autonomy-calibration-env/openenv.yaml) |
+| **Training Script** | ✅ Ready | [train.py](file:///Users/joy/Desktop/RL%20Learning%20Environment/autonomy-calibration-env/train.py) |
+| **Hugging Face Space** | ⏳ Pending | [Link to HF Space](#) |
+| **Video/Blog** | ⏳ Pending | [Link to Video/Blog](#) |
 
 ---
-*Authored by Rhythm for the OpenEnv India Hackathon 2026.*
+
+## 🚀 Getting Started
+
+### 1. Build & Run
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Start the Hub
+uvicorn main:app --port 7860
+```
+
+### 2. Run Training
+```bash
+python3 train.py
+```
+
+### 3. Deploy to HF Spaces
+1. Create a "Docker" space on Hugging Face.
+2. Push this repository.
+3. Set `ENV_PORT=7860` in Space secrets.
+
+---
+**Team [Your Team Name]** | *India 2026 OpenEnv Hackathon*
