@@ -1,3 +1,13 @@
+---
+title: Autonomy Calibration Hub
+emoji: 🧠
+colorFrom: indigo
+colorTo: cyan
+sdk: docker
+pinned: false
+app_port: 7860
+---
+
 # 🧠 Epistemic Agency Hub: Autonomy Calibration Environment
 ### *OpenEnv India Hackathon 2026 — Submission*
 
