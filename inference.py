@@ -1,23 +1,6 @@
 """
 inference.py — OpenEnv Mandatory Inference Script
 Autonomy Calibration Environment v1.0
-
-Reads from environment:
-  OPENAI_API_KEY  — required for openai mode
-  API_BASE_URL    — environment API base (default: http://localhost:7860/api)
-  MODEL_NAME      — model to use (default: gpt-4o-mini)
-
-Runs all 3 tasks sequentially with temperature=0 for determinism.
-
-Output format (strictly enforced):
-  [START]
-  [STEP] step=0 action={"type": "...", "payload": {}}
-  [STEP] step=1 action={"type": "...", "payload": {}}
-  [END] score=0.85
-
-Usage:
-  python inference.py                          # uses OpenAI
-  python inference.py --mode rule_based        # no API key needed (baseline)
 """
 from __future__ import annotations
 import os
@@ -26,9 +9,8 @@ import json
 import argparse
 import requests
 
-# ─── Config ──────────────────────────────────────────────────────────────────
-
-API_BASE = os.getenv("API_BASE_URL", "http://localhost:7860/api").rstrip("/")
+# ─── Config (Local Dev Port: 8000) ───────────────────────────────────────────
+API_BASE = os.getenv("API_BASE_URL", "http://localhost:8000/api").rstrip("/")
 MODEL_NAME = os.getenv("MODEL_NAME", "gpt-4o-mini")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 
@@ -66,43 +48,45 @@ def _call_rule_based(obs: dict) -> str:
     if not available:
         return json.dumps({"type": "confirm", "payload": {}})
 
-    state = obs.get("state", {})
     prompt_text = obs.get("prompt", "").lower()
+    task_id = obs.get("task_id", "").lower()
+    step = obs.get("step", 0)
 
-    # Safety-first rules
+    # 1. High-priority Fraud/Safety overrides
     fraud_keywords = ["fraud", "phishing", "offshore", "unrecognized", "suspicious", "typo"]
-    stop_keywords = ["block", "reject", "flag", "stop", "banned"]
-    ask_keywords = ["verify", "verification", "escalate", "compliance", "confirm", "unclear"]
-    recover_keywords = ["hold", "review", "pending", "alternative", "suspicious_activity"]
-
     if any(kw in prompt_text for kw in fraud_keywords):
-        for a in ["flag_fraud", "classify_phishing", "reject_transfer", "reply_block"]:
+        for a in ["flag_fraud", "classify_phishing", "reject_transfer", "reply_block", "log_fraud_report"]:
             if a in available:
                 return json.dumps({"type": a, "payload": {}})
 
-    if any(kw in prompt_text for kw in recover_keywords):
-        for a in ["hold_for_review", "log_suspicious_activity", "close_pending_review"]:
-            if a in available:
-                return json.dumps({"type": a, "payload": {}})
+    # 2. Context-aware task mapping
+    if "email" in task_id:
+        if step == 0:
+            for a in ["classify_normal", "classify_urgent", "classify_spam", "classify_phishing"]:
+                if a in available: return json.dumps({"type": a, "payload": {}})
+        if step == 1:
+            for a in ["reply_auto", "archive", "escalate_manager", "reply_block"]:
+                if a in available: return json.dumps({"type": a, "payload": {}})
 
-    if any(kw in prompt_text for kw in ask_keywords):
-        for a in ["request_verification", "escalate_compliance", "verify_metrics_ok", "verify_logs_clean"]:
-            if a in available:
-                return json.dumps({"type": a, "payload": {}})
+    if "incident" in prompt_text or "devops" in task_id:
+        if "spike" in prompt_text or "cpu" in prompt_text:
+            if "diagnose_cpu_spike" in available: return json.dumps({"type": "diagnose_cpu_spike", "payload": {}})
+        if "memory" in prompt_text:
+            if "diagnose_memory_leak" in available: return json.dumps({"type": "diagnose_memory_leak", "payload": {}})
+        if "fix_restart_service" in available: return json.dumps({"type": "fix_restart_service", "payload": {}})
+        if "close_resolved" in available: return json.dumps({"type": "close_resolved", "payload": {}})
 
-    if any(kw in prompt_text for kw in stop_keywords):
-        for a in ["reject_transfer", "flag_fraud", "reply_block"]:
-            if a in available:
-                return json.dumps({"type": a, "payload": {}})
-
-    # Safe defaults by action_type patterns
-    safe_prefixes = ["classify_", "diagnose_", "verify_", "log_", "close_", "fix_", "confirm", "archive", "reply_auto"]
-    for prefix in safe_prefixes:
+    # 3. Safe fallback logic based on common prefixes
+    priority = ["classify_", "diagnose_", "fix_", "verify_", "log_", "close_", "confirm", "archive"]
+    for p in priority:
         for a in available:
-            if a.startswith(prefix):
+            if a.startswith(p):
                 return json.dumps({"type": a, "payload": {}})
 
-    return json.dumps({"type": available[0], "payload": {}})
+    # Ultimate fallback: pick first available
+    if available:
+        return json.dumps({"type": available[0], "payload": {}})
+    return json.dumps({"type": "confirm", "payload": {}})
 
 
 # ─── Environment Interface ────────────────────────────────────────────────────
@@ -115,6 +99,8 @@ def _reset(task: str) -> dict:
 
 def _step(action: dict) -> dict:
     r = requests.post(f"{API_BASE}/step", json=action, timeout=15)
+    if r.status_code != 200:
+        print(f"DEBUG Error: {r.status_code} - {r.text}")
     r.raise_for_status()
     return r.json()
 
@@ -122,22 +108,20 @@ def _step(action: dict) -> dict:
 # ─── Episode Runner ───────────────────────────────────────────────────────────
 
 def run_episode(task_name: str, mode: str) -> float:
-    """
-    Run one full episode for a task.
-    Prints exact [START] / [STEP] / [END] format.
-    Returns final episode score.
-    """
     print("[START]")
+    try:
+        obs = _reset(task_name)
+    except Exception as e:
+        print(f"Failed to reset: {e}")
+        return 0.0
 
-    obs = _reset(task_name)
     step_idx = 0
     episode_score = 0.0
 
     while not obs.get("done", False):
-        prompt = obs.get("prompt", json.dumps(obs.get("state", {})))
-
         # Generate action
         if mode == "openai":
+            prompt = obs.get("prompt", "")
             raw_response = _call_openai(prompt)
         else:
             raw_response = _call_rule_based(obs)
@@ -145,30 +129,27 @@ def run_episode(task_name: str, mode: str) -> float:
         # Parse to dict
         try:
             action_dict = json.loads(raw_response)
-            if "type" not in action_dict:
-                action_dict = {"type": obs.get("available_actions", ["confirm"])[0], "payload": {}}
-        except (json.JSONDecodeError, ValueError):
-            # Fallback: pick first available action
+        except:
             action_dict = {"type": obs.get("available_actions", ["confirm"])[0], "payload": {}}
 
         action_str = json.dumps(action_dict, separators=(",", ":"))
         print(f"[STEP] step={step_idx} action={action_str}")
 
         # Submit to environment
-        result = _step(action_dict)
-        obs = result.get("observation", {})
-        reward = result.get("reward", {})
-        done = result.get("done", False)
-        info = result.get("info", {})
-
-        if done and info.get("episode_score") is not None:
-            episode_score = info["episode_score"]
+        try:
+            result = _step(action_dict)
+            obs = result.get("observation", {})
+            done = result.get("done", False)
+            info = result.get("info", {})
+            
+            if done and info.get("episode_score") is not None:
+                episode_score = info["episode_score"]
+        except Exception as e:
+            print(f"Decision rejected: {e}")
+            break
 
         step_idx += 1
-
-        # Safety: break on max steps
-        if step_idx > 10:
-            break
+        if step_idx > 10: break
 
     print(f"[END] score={episode_score:.4f}")
     return episode_score
@@ -177,48 +158,22 @@ def run_episode(task_name: str, mode: str) -> float:
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="OpenEnv Inference Script — Autonomy Calibration Environment"
-    )
-    parser.add_argument(
-        "--mode",
-        choices=["openai", "rule_based"],
-        default="openai" if OPENAI_API_KEY else "rule_based",
-        help="Inference backend (default: openai if OPENAI_API_KEY is set, else rule_based)",
-    )
-    parser.add_argument(
-        "--task",
-        choices=ALL_TASKS + ["all"],
-        default="all",
-        help="Which task to run (default: all)",
-    )
+    parser = argparse.ArgumentParser(description="OpenEnv Inference Script")
+    parser.add_argument("--mode", choices=["openai", "rule_based"], default="rule_based")
+    parser.add_argument("--task", default="all")
     args = parser.parse_args()
-
-    if args.mode == "openai" and not OPENAI_API_KEY:
-        print("ERROR: OPENAI_API_KEY is not set. Use --mode rule_based or export OPENAI_API_KEY.", file=sys.stderr)
-        sys.exit(1)
 
     tasks_to_run = ALL_TASKS if args.task == "all" else [args.task]
     scores = {}
 
     for task_name in tasks_to_run:
-        print(f"\n{'='*60}")
-        print(f"TASK: {task_name.upper()} | MODE: {args.mode} | MODEL: {MODEL_NAME if args.mode == 'openai' else 'rule_based'}")
-        print(f"{'='*60}")
+        print(f"\nTASK: {task_name.upper()} | MODE: {args.mode}")
         score = run_episode(task_name, args.mode)
         scores[task_name] = score
 
-    # Summary
     if len(scores) > 1:
         avg = sum(scores.values()) / len(scores)
-        print(f"\n{'='*60}")
-        print("FINAL SUMMARY")
-        print(f"{'='*60}")
-        for t, s in scores.items():
-            print(f"  {t:30s}: {s:.4f}")
-        print(f"  {'AVERAGE':30s}: {avg:.4f}")
-        print(f"{'='*60}")
-
+        print(f"\nAVERAGE SCORE: {avg:.4f}")
 
 if __name__ == "__main__":
     main()
