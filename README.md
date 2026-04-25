@@ -1,6 +1,5 @@
 ---
 title: Autonomy Calibration Hub
-emoji: 🧠
 colorFrom: indigo
 colorTo: blue
 sdk: docker
