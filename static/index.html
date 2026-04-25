@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Autonomy Calibration Environment</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+<header>
+  <h1>Autonomy Calibration Environment</h1>
+  <p>Train AI agents to decide: when to act, ask, stop, or recover</p>
+  <span class="badge">OpenEnv India Hackathon 2026 — by Rhythm</span>
+</header>
+
+<!-- Stats Bar -->
+<div class="layout">
+  <div class="stats-bar">
+    <div class="stat-chip">
+      <span class="stat-value" id="stat-episodes">0</span>
+      <span class="stat-label">Episodes</span>
+    </div>
+    <div class="stat-chip">
+      <span class="stat-value positive" id="stat-correct">0</span>
+      <span class="stat-label">Correct</span>
+    </div>
+    <div class="stat-chip">
+      <span class="stat-value" id="stat-reward">0.0</span>
+      <span class="stat-label">Avg Reward</span>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div id="loading" class="card scenario-full loading">Loading scenario...</div>
+
+  <!-- Main Content (hidden until loaded) -->
+  <div id="content" style="display:none; grid-column: 1 / -1;">
+    <div class="layout">
+
+      <!-- Left: Context + Task -->
+      <div class="card">
+        <h2>Scenario</h2>
+        <span id="category-tag" class="category-tag">DEVELOPER</span>
+        <span id="scenario-id" style="float:right; font-size:0.75rem; color:#5c6bc0;"></span>
+
+        <div class="field-label">Context (what the user told you)</div>
+        <div class="field-value" id="context-text"></div>
+
+        <div class="field-label">Current Task</div>
+        <div class="field-value" id="task-text"></div>
+      </div>
+
+      <!-- Right: Action + History -->
+      <div class="card">
+        <h2>Action & History</h2>
+
+        <div class="field-label">Action you are about to take</div>
+        <div class="field-value action-highlight" id="action-text"></div>
+
+        <div class="field-label">Previous actions this episode</div>
+        <div id="history-list"></div>
+      </div>
+
+      <!-- Decision Buttons -->
+      <div class="card decision-section">
+        <h2>Your Decision</h2>
+        <p style="color:#9fa8da; font-size:0.85rem; margin-bottom:16px;">
+          Read the context and action carefully. Choose the most appropriate response.
+        </p>
+        <div class="btn-grid">
+          <button class="decision-btn btn-act" onclick="submitDecision('ACT')">
+            <span class="btn-icon">⚡</span>
+            <span class="btn-label">ACT</span>
+            <span class="btn-desc">Execute immediately</span>
+          </button>
+          <button class="decision-btn btn-ask" onclick="submitDecision('ASK')">
+            <span class="btn-icon">🤔</span>
+            <span class="btn-label">ASK</span>
+            <span class="btn-desc">Request confirmation</span>
+          </button>
+          <button class="decision-btn btn-stop" onclick="submitDecision('STOP')">
+            <span class="btn-icon">🛑</span>
+            <span class="btn-label">STOP</span>
+            <span class="btn-desc">Refuse — constraint violated</span>
+          </button>
+          <button class="decision-btn btn-recover" onclick="submitDecision('RECOVER')">
+            <span class="btn-icon">🔄</span>
+            <span class="btn-label">RECOVER</span>
+            <span class="btn-desc">Find alternative</span>
+          </button>
+        </div>
+        <button class="new-episode-btn" onclick="startNewEpisode()">
+          ↻ New Episode
+        </button>
+      </div>
+
+      <!-- Episode Done Banner -->
+      <div id="done-banner" class="episode-done-banner">
+        Episode complete. Click <strong>New Episode</strong> to continue.
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Result Modal -->
+<div id="modal-overlay" class="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-verdict" id="modal-verdict">✅ CORRECT</div>
+    <div class="modal-subtitle" id="modal-subtitle">You chose: ACT</div>
+    <div class="modal-total" id="modal-total">Total Reward: +0.0</div>
+
+    <div id="reward-rows"></div>
+
+    <div class="best-decision-reveal" id="best-decision"></div>
+
+    <button class="modal-close-btn" onclick="closeModal()">
+      Continue →
+    </button>
+  </div>
+</div>
+
+<script src="/static/app.js?v=2.0.2"></script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+name: autonomy-calibration-env
+version: "2.0.0"
+v2_compliant: true
+
+api:
+  base_url: http://localhost:7860/api
+  reset_endpoint:   POST /reset
+  step_endpoint:    POST /step
+  state_endpoint:   GET  /state
+  health_endpoint:  GET  /health
+  episodes_endpoint: GET /episodes
+  replay_endpoint:  GET  /replay/{episode_id}
+  grade_endpoint:   GET  /grade/{episode_id}
+
+reward_range: [0.01, 0.99]
+reproducible: true
+deterministic_grader: true
+max_runtime_minutes: 20
+compute_requirements: "CPU only — 2 vCPU, 8GB RAM"
+persistence: sqlite
+test_suite: pytest
+
+tasks:
+  - id: email_triage
+    difficulty: easy
+    steps: 3
+    description: >
+      Classify incoming emails and choose appropriate response actions.
+      Tests: classification accuracy, appropriate escalation, avoiding over-reaction.
+
+  - id: devops_incident
+    difficulty: medium
+    steps: 4
+    description: >
+      Diagnose system incidents from log evidence and apply safe recovery actions.
+      Tests: root cause identification, safe fix selection, verification.
+
+  - id: financial_request
+    difficulty: hard
+    steps: 5
+    description: >
+      Handle financial transfer requests by detecting fraud signals and applying
+      appropriate approval, rejection, or escalation actions.
+      Tests: fraud detection, over-caution avoidance, audit compliance.
+
+action_space:
+  type: structured
+  format: '{"type": str, "payload": dict}'
+  description: >
+    Actions are structured JSON objects with a type string chosen from
+    available_actions in the observation, and an optional payload dict.
+
+observation_space:
+  type: structured
+  fields:
+    - task_id: str
+    - step: int
+    - state: dict
+    - history: list
+    - available_actions: list[str]
+    - done: bool
+    - prompt: str
+
+post_training_strategy:
+  phase_1_baseline:
+    script: inference.py
+    mode: rule_based
+    description: >
+      Keyword heuristic baseline agent. Expected accuracy 55-65%.
+      Establishes the performance floor.
+
+  phase_2_grpo:
+    script: train.py
+    mode: openai
+    description: >
+      GRPO fine-tuning using environment reward as training signal.
+      Agent queries /api/reset and /api/step in a loop.
+      Policy updates driven by normalised [0, 1] episode reward.
+
+  phase_3_self_improvement:
+    description: >
+      Episodes where the agent scores below 0.50 are logged as hard negatives.
+      Scenario variants are generated from these failures and validated
+      before injection into the training dataset.
+
+  phase_4_evaluation:
+    description: Held-out test split evaluation on unseen scenario variants.
+    metrics:
+      - episode_score
+      - per_task_accuracy
+      - fraud_detection_rate
+      - over_caution_rate
+      - avg_reward
+
+deployment:
+  platform: huggingface_spaces
+  port: 7860
+  dockerfile: Dockerfile
+  runtime: python3.11-slim
+
+tags:
+  - autonomy-calibration
+  - decision-making
+  - constraint-following
+  - responsible-ai
+  - multi-step
+  - rlhf
+  - grpo
+  - openenv

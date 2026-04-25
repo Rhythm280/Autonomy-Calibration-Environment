@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+
+# Data & DB
+autonomy_env.db
+training_trajectories.json
+
+# IDEs
+.vscode/
+.idea/
+.DS_Store
+
+# Environment Variables
+.env
