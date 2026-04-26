@@ -1,6 +1,5 @@
 # Calibrating Autonomy: Building LLMs that Know When to Ask for Help
-
-**OpenEnv India Hackathon 2026 Case Study**
+### 📖 OpenEnv India Hackathon 2026 Technical Case Study
 
 ---
 
@@ -67,8 +66,6 @@ The key objective:
 We define this capability as **Epistemic Agency**.
 
 Rather than rewarding speed, the environment rewards **informed decision-making**.
-
-*The Autonomy Calibration Dashboard used for monitoring agent behavior and reward signals.*
 
 ---
 
@@ -159,8 +156,6 @@ Key learning signal:
 
 > The cost of investigation is consistently lower than the cost of incorrect execution.
 
-*Policy loss and reward convergence over training steps.*
-
 ---
 
 ## Results
@@ -170,8 +165,6 @@ Key learning signal:
 | Blind Baseline         | Never investigates      | ~0.57               |
 | Over-Cautious Baseline | Always investigates     | ~0.94               |
 | GRPO-Trained Agent     | Selective investigation | Highest performance |
-
-*Performance comparison across baseline and trained agents.*
 
 The trained agent learns a calibrated policy:
 
@@ -212,9 +205,7 @@ This is critical for deploying AI in:
 ## Conclusion
 
 Improving AI capability is not only about increasing accuracy.
-
 It is about improving **decision quality under uncertainty**.
-
 This work introduces a structured way to train and evaluate that capability.
 
 ---
@@ -222,13 +213,6 @@ This work introduces a structured way to train and evaluate that capability.
 ## Appendix: Technical Evidence
 
 ### Model Comparison and Loss
-
-
----
-
-### Reward Evolution
-
-
 The reward curve demonstrates consistent movement from blind execution toward calibrated decision-making.
 
 ---
@@ -244,3 +228,6 @@ All results are reproducible using the provided Colab notebook and training pipe
 This project reframes AI performance:
 
 > The goal is not just to act correctly, but to act for the right reasons.
+
+---
+*Authored by Rhythm | OpenEnv India Hackathon 2026 Submission*
