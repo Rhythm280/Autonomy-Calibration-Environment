@@ -168,7 +168,7 @@ def run_training():
         print("🚀 GRPO TRAINING CORE: Initializing...")
         # Redirect stdout and stderr to the main process ones so they appear in HF Logs
         process = subprocess.Popen(
-            [sys.executable, "scripts/train_rl.py"],
+            [sys.executable, "train_rl.py"],
             stdout=sys.stdout, 
             stderr=sys.stderr,
             bufsize=1, # Line buffered
