@@ -4,7 +4,7 @@ Standardized for OpenEnv Core v0.2.x.
 """
 
 from openenv.core.env_client import EnvClient
-from models import Action, Observation, StepResult, Reward, TaskState
+from models import Action, Observation, StepResult, Reward
 import requests
 
 class AutonomyCalibrationClient(EnvClient):
