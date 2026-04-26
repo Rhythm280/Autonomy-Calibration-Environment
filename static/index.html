@@ -31,6 +31,17 @@
     </div>
   </div>
 
+  <div class="card training-card">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <h3>Model Operations</h3>
+        <p style="font-size:0.8rem; color:#9fa8da;">Trigger the background GRPO training pipeline on GPU credits.</p>
+      </div>
+      <button id="train-btn" class="secondary-btn" onclick="startTraining()">🚀 Start GPU Training</button>
+    </div>
+    <div id="train-status" class="status-msg"></div>
+  </div>
+
   <!-- Loading -->
   <div id="loading" class="card scenario-full loading">Loading scenario...</div>
 

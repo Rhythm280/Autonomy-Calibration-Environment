@@ -5,10 +5,12 @@
 from __future__ import annotations
 import os
 from collections import Counter
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+import subprocess
+import sys
 from pydantic import BaseModel
 
 from models import Action, Observation, Reward, StepResult, ResetRequest
@@ -156,6 +158,39 @@ def state():
         "task": _session["task_name"],
         "step": _session["step"],
         **task.state(),
+    }
+
+# ─── API: Training ────────────────────────────────────────────────────────────
+
+def run_training():
+    """Runs the training script in a separate process."""
+    try:
+        # Use sys.executable to ensure we use the same python environment
+        cmd = [sys.executable, "scripts/train_rl.py"]
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # We don't wait for completion here to avoid blocking the worker indefinitely
+        print("Training process launched in background.")
+    except Exception as e:
+        print(f"Error during background training: {e}")
+
+@app.post("/api/train")
+def start_training(background_tasks: BackgroundTasks):
+    # Basic check for GPU presence (useful for logs)
+    try:
+        import torch
+        has_gpu = torch.cuda.is_available()
+        device_name = torch.cuda.get_device_name(0) if has_gpu else "CPU"
+    except ImportError:
+        has_gpu = False
+        device_name = "CPU"
+    
+    background_tasks.add_task(run_training)
+    
+    return {
+        "status": "started",
+        "message": "GRPO Training started in background.",
+        "using_gpu": has_gpu,
+        "device": device_name
     }
 
 

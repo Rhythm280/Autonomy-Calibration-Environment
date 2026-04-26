@@ -29,6 +29,36 @@ const elModalTotal   = document.getElementById('modal-total');
 const elRewardRows   = document.getElementById('reward-rows');
 const elBestDecision = document.getElementById('best-decision');
 
+// ─── GPU TRAINING ──────────────────────────────────────────────
+async function startTraining() {
+    const btn = document.getElementById('train-btn');
+    const status = document.getElementById('train-status');
+    
+    btn.disabled = true;
+    btn.innerHTML = "⏳ Initializing...";
+    status.innerHTML = "Requesting GPU compute resources...";
+    status.style.display = 'block';
+    status.style.color = '#9fa8da';
+
+    try {
+        const response = await fetch('/api/train', { method: 'POST' });
+        const data = await response.json();
+        
+        if (data.status === 'started') {
+            btn.innerHTML = "⚙️ Training in Progress";
+            status.innerHTML = `Success: Training started on ${data.device}.<br>Check logs for progress.`;
+            status.style.color = '#81c784';
+        } else {
+            throw new Error(data.detail || "Failed to start training");
+        }
+    } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = "🚀 Start GPU Training";
+        status.innerHTML = `Error: ${err.message}`;
+        status.style.color = '#e57373';
+    }
+}
+
 
 // ─── STARTUP ─────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', startNewEpisode);
