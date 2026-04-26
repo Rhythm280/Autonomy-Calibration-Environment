@@ -45,6 +45,7 @@ def run_trl_training():
         learning_rate=5e-6,
         per_device_train_batch_size=1,
         num_generations=4,
+        generation_batch_size=4, # Must be a multiple of num_generations
         report_to="none"
     )
 
