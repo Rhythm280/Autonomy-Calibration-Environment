@@ -7,3 +7,11 @@ aiofiles>=23.0.0
 requests>=2.31.0
 openenv-core>=0.2.3
 matplotlib>=3.8.0
+# --- Training Stack (Now required for GPU Training) ---
+torch>=2.2.0
+transformers>=4.40.0
+trl>=0.8.6
+accelerate>=0.29.0
+peft>=0.10.0
+bitsandbytes>=0.43.0
+sentencepiece
