@@ -62,8 +62,7 @@ The agent demonstrates clear convergence during the GRPO calibration phase. Logg
 - **Hugging Face Space**: [Live Benchmark Hub](https://huggingface.co/spaces/JOY0021/autonomy-calibration-benchmark)
 - **Trained Model Weights**: [autonomy-agent-v2](https://huggingface.co/JOY0021/autonomy-agent-v2)
 - **Interactive Training Loop**: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Rhythm280/Autonomy-Calibration-Environment/blob/main/notebooks/training.ipynb) or [View on GitHub](notebooks/training.ipynb)
-- **Detailed Writeup**: [Project Blog Post](Blog.md)
-- **Demo Video**: [YouTube Walkthrough](https://youtube.com/yourlink) (Add your link here!)
+- **🎥 YouTube Demo Video**: [Watch the Walkthrough Here](https://youtube.com/yourlink)
 
 ## Deployment and Setup
 The environment is containerized using Docker for seamless deployment on Hugging Face Spaces.
