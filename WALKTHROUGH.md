@@ -64,3 +64,43 @@ We constructed a **Glassmorphism** dark mode using `backdrop-filter: blur(16px)`
 - **Initialization**: Upon DOM load, `startNewEpisode()` fires a fetch to `/reset` and populates the HTML cards (Context, Task, Action).
 - **Submitting Decisions**: Clicking one of the four action buttons constructs an artificial LLM output string (`"DECISION: STOP"`) and `POST`s it to `/step`.
 - **Feedback Loop Modal**: The javascript consumes the resulting `reward_breakdown` from the FastAPI server and dynamically generates an animated UI overlay showing exactly *why* that choice was Correct or Wrong, hiding the true `best_decision` from the user until they commit their answer!
+
+## 🚀 Step-by-Step Submission Guide
+
+### 🛠️ Phase 1: Environment Setup
+1.  **Clone & Install**:
+    ```bash
+    git clone https://github.com/Rhythm280/Autonomy-Calibration-Environment
+    pip install -r requirements.txt
+    ```
+2.  **Start Server**: `python main.py`
+3.  **Access Dashboard**: Open `localhost:7860`.
+
+### 🧪 Phase 2: Human-in-the-loop Evaluation
+1.  Select a **Scenario** (Email Triage, DevOps, or Finance).
+2.  Read the **Forensics Locker** (if available) or choose to **INVESTIGATE**.
+3.  Submit your **Decision** and review the reward breakdown.
+
+### 🧠 Phase 3: Self-Training (GRPO)
+1.  Click **🚀 Start GPU Training**.
+2.  Watch the **Live Metrics Graph** appear.
+3.  Monitor the convergence of **Policy Loss** vs **Mean Reward**.
+4.  Capture `Training_Graph.png` to prove the agent learned.
+
+### ☁️ Phase 5: Cloud & Hackathon Submission (Judge's Guide)
+This project is designed for 100% reproducibility in the cloud.
+
+#### 1. Google Colab (One-Click Training)
+- Open the [Interactive Training Notebook](https://colab.research.google.com/github/Rhythm280/Autonomy-Calibration-Environment/blob/main/notebooks/training.ipynb).
+- Select `Runtime → Change runtime type → T4 GPU`.
+- Click **Run All**. 
+- The notebook will automatically pull data from your **Hugging Face Space API**, train using **GRPO**, and download comparison plots (`baseline_vs_trained.png`).
+
+#### 2. Hugging Face Hub (Peer Review)
+- Visit the [Model Repository](https://huggingface.co/JOY0021/autonomy-agent-v2).
+- Check the **Files and versions** tab to see the `adapter_model.safetensors` and `trainer_state.json`.
+- The `trainer_state.json` contains the step-by-step logs of your training run, serving as permanent technical evidence for the hackathon judges.
+
+#### 3. Hugging Face Space (Live Demo)
+- The [Live Space](https://huggingface.co/spaces/JOY0021/autonomy-calibration-benchmark) hosts the API and the Interactive Dashboard.
+- Judges can play through scenarios manually to feel the "calibration" challenge before seeing the agent's performance.

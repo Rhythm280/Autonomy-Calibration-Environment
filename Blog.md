@@ -10,7 +10,8 @@ In high-stakes environments—DevOps, Triage, or Finance—a "correct" action ta
 
 Our project introduces the **Autonomy Calibration Hub**, a standardized reinforcement learning environment that evaluates and trains an agent's **Epistemic Agency**—its ability to resolve uncertainty before acting.
 
-![[Dashboard Overview Placeholder: Add a screenshot of your main UI here]]
+![Dashboard Overview](Dashboard_Overview.png)
+_The Autonomy Calibration Dashboard: A production-ready interface for monitoring agent calibration._
 
 ---
 
@@ -30,7 +31,8 @@ Our agent doesn't just receive a prompt; it receives a **Partially Observable St
 
 Using the **Hugging Face TRL library**, we implemented **Group Relative Policy Optimization (GRPO)**. Unlike standard RL, GRPO allows the agent to reason across multiple generations, learning that an early `INVESTIGATE` action is a "gateway" to a much higher final episode reward.
 
-![[Training Graph Placeholder: Add a screenshot of your live Chart.js graph here]]
+![Training Convergence](training_curves.png)
+_Evidence of Convergence: Policy Loss and Episode Reward over 120 steps._
 
 ---
 
@@ -50,7 +52,8 @@ During our bench testing, we saw a dramatic shift in agent behavior:
 - **Pre-Training**: The agent was 85% "Confident" but only 40% "Correct" on ambiguous DevOps incidents.
 - **Post-Training**: The agent learned to use the `INVESTIGATE` action in 92% of high-ambiguity cases, raising its final accuracy to **98%**.
 
-![[Result Modal Placeholder: Add a screenshot of a "🏁 COMPLETED" verdict modal]]
+![Baseline Comparison](baseline_vs_trained.png)
+_Benchmark Results: GRPO Agent vs. Blind and Smart Baselines across all tasks._
 
 ---
 
