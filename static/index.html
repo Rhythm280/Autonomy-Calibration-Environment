@@ -37,7 +37,10 @@
         <h3>Model Operations</h3>
         <p style="font-size:0.8rem; color:#9fa8da;">Trigger the background GRPO training pipeline on GPU credits.</p>
       </div>
-      <button id="train-btn" class="secondary-btn" onclick="startTraining()">🚀 Start GPU Training</button>
+      <div style="display:flex; gap:10px;">
+        <button id="train-btn" class="secondary-btn" onclick="startTraining()">🚀 Start GPU Training</button>
+        <button id="upload-btn" class="secondary-btn" style="background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%);" onclick="uploadModel()">📡 Publish to Hub</button>
+      </div>
     </div>
     <div id="train-status" class="status-msg"></div>
   </div>

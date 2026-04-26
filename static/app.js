@@ -59,6 +59,36 @@ async function startTraining() {
     }
 }
 
+async function uploadModel() {
+    const btn = document.getElementById('upload-btn');
+    const status = document.getElementById('train-status');
+    const repoId = "JOY0021/autonomy-agent-v2";
+
+    btn.disabled = true;
+    btn.innerHTML = "📡 Uploading...";
+    status.style.display = 'block';
+    status.innerHTML = `Pushing data to <a href="https://huggingface.co/${repoId}" target="_blank" style="color:#64b5f6">${repoId}</a>...`;
+    status.style.color = '#9fa8da';
+
+    try {
+        const response = await fetch('/api/upload', { method: 'POST' });
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            btn.innerHTML = "✅ Published!";
+            status.innerHTML = `Success! View your model: <a href="https://huggingface.co/${repoId}" target="_blank" style="color:#81c784; text-decoration:underline;">huggingface.co/${repoId}</a>`;
+            status.style.color = '#81c784';
+        } else {
+            throw new Error(data.message || "Upload failed");
+        }
+    } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = "📡 Publish to Hub";
+        status.innerHTML = `Upload Error: ${err.message}. Make sure the model page exists!`;
+        status.style.color = '#e57373';
+    }
+}
+
 
 // ─── STARTUP ─────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', startNewEpisode);

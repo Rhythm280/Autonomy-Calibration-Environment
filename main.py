@@ -198,6 +198,23 @@ def start_training(background_tasks: BackgroundTasks):
         "device": device_name
     }
 
+@app.post("/api/upload")
+def upload_to_hub(repo_id: str = "JOY0021/autonomy-agent-v2"):
+    """Pushes the trained folder to the HF Hub model repo."""
+    try:
+        from huggingface_hub import HfApi
+        api = HfApi()
+        print(f"📡 Uploading autonomy-agent-v2 to {repo_id}...")
+        api.upload_folder(
+            folder_path="autonomy-agent-v2",
+            repo_id=repo_id,
+            repo_type="model",
+        )
+        return {"status": "success", "message": f"Model live at https://huggingface.co/{repo_id}"}
+    except Exception as e:
+        print(f"❌ Upload Error: {e}")
+        return {"status": "error", "message": str(e)}
+
 
 # ─── API: Health ─────────────────────────────────────────────────────────────
 
