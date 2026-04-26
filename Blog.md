@@ -68,7 +68,6 @@ We define this capability as **Epistemic Agency**.
 
 Rather than rewarding speed, the environment rewards **informed decision-making**.
 
-![Dashboard Overview](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/Dashboard_Overview.jpg)
 *The Autonomy Calibration Dashboard used for monitoring agent behavior and reward signals.*
 
 ---
@@ -160,7 +159,6 @@ Key learning signal:
 
 > The cost of investigation is consistently lower than the cost of incorrect execution.
 
-![Training Convergence](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/training_curves.jpg)
 *Policy loss and reward convergence over training steps.*
 
 ---
@@ -173,7 +171,6 @@ Key learning signal:
 | Over-Cautious Baseline | Always investigates     | ~0.94               |
 | GRPO-Trained Agent     | Selective investigation | Highest performance |
 
-![Baseline Comparison](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/baseline_vs_trained.jpg)
 *Performance comparison across baseline and trained agents.*
 
 The trained agent learns a calibrated policy:
@@ -226,14 +223,11 @@ This work introduces a structured way to train and evaluate that capability.
 
 ### Model Comparison and Loss
 
-![Model Comparison](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/model_comparison.jpg)
-![Loss Curve](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/loss_curve.jpg)
 
 ---
 
 ### Reward Evolution
 
-![Reward Curve](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/reward_curve.jpg)
 
 The reward curve demonstrates consistent movement from blind execution toward calibrated decision-making.
 

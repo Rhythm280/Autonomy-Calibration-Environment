@@ -2,7 +2,6 @@
 ### A Reinforcement Learning Benchmark for Responsible AI Decision-Making
 **Author:** Rhythm | **Hackathon:** OpenEnv India Hackathon 2026
 **Live Space:** https://huggingface.co/spaces/JOY0021/autonomy-calibration-benchmark
-**Training Notebook:** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Rhythm280/Autonomy-Calibration-Environment/blob/main/notebooks/training.ipynb)
 **Case Study:** [Read the Technical Blog Post](Blog.md)
 
 ---
@@ -269,10 +268,8 @@ For each episode:
 *(Fill in after running training notebook)*
 
 **Reward curve:**
-![Reward Curve](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/reward_curve.jpg)
 
 **Baseline vs Trained:**
-![Baseline vs Trained](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/baseline_vs_trained.jpg)
 
 ---
 
@@ -319,7 +316,6 @@ This phase demonstrates the "Self-Calibrating" capability of the agent.
 4.  **Monitor Convergence**: 
     - Within 10-20 seconds, a **Live Metrics Chart** will fade in below the buttons. 
     - Watch the **Policy Loss** (Red) and **Mean Reward** (Green) update in real-time.
-    - ![Training Active](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/UI_Training_Active.jpg)
 
 ### ☁️ Phase 4: Cloud & Hackathon Submission (Judge's Guide)
 This project is designed for 100% reproducibility in the cloud.

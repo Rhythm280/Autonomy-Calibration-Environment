@@ -54,11 +54,7 @@ The training pipeline is designed for scalability and observability:
 ## 📈 Training Evidence & Analytics
 Our agent demonstrates clear convergence during the GRPO calibration phase.
 
-![Training Evidence](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/training_curves.jpg)
-_Evidence of the calibrated training loop: Policy Loss (left) vs. Episode Reward (right)._
 
-![Baseline Comparison](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/baseline_vs_trained.jpg)
-_Performance leap: The GRPO agent significantly outperforms both the 'Blind' and 'Smart' baselines._
 
 | Metric                     | Baseline | Calibrated Agent (v2) | Improvement |
 | :------------------------- | :------- | :-------------------- | :---------- |
@@ -71,7 +67,6 @@ _Performance leap: The GRPO agent significantly outperforms both the 'Blind' and
 - **OpenEnv Standards**: Built on **OpenEnv Core v0.2.x** for strict client-server standardization.
 - **Hugging Face Space**: [Live Benchmark Hub](https://huggingface.co/spaces/JOY0021/autonomy-calibration-benchmark)
 - **Trained Model Weights**: [autonomy-agent-v2](https://huggingface.co/JOY0021/autonomy-agent-v2)
-- **Interactive Training Loop**: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Rhythm280/Autonomy-Calibration-Environment/blob/main/notebooks/training.ipynb) or [View on GitHub](notebooks/training.ipynb)
 - **📝 Technical Case Study**: [Detailed Blog Post](Blog.md)
 
 ## Deployment and Setup
