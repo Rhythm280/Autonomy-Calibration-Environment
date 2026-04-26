@@ -200,10 +200,19 @@ def start_training(background_tasks: BackgroundTasks):
 
 @app.post("/api/upload")
 def upload_to_hub(repo_id: str = "JOY0021/autonomy-agent-v2"):
-    """Pushes the trained folder to the HF Hub model repo."""
+    """Pushes the trained folder to the HF Hub model repo, creating it if needed."""
     try:
-        from huggingface_hub import HfApi
-        api = HfApi()
+        import os
+        from huggingface_hub import HfApi, create_repo
+        
+        token = os.getenv("HF_TOKEN")
+        api = HfApi(token=token)
+        
+        # 1. Create repo if it doesn't exist
+        print(f"📦 Ensuring repo {repo_id} exists...")
+        create_repo(repo_id=repo_id, repo_type="model", exist_ok=True, token=token)
+        
+        # 2. Upload the folder
         print(f"📡 Uploading autonomy-agent-v2 to {repo_id}...")
         api.upload_folder(
             folder_path="autonomy-agent-v2",
