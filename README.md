@@ -9,16 +9,16 @@ app_port: 7860
 
 # Epistemic Agency Hub: Autonomy Calibration Environment
 
-> [!TIP]
-> **🎥 YouTube Project Walkthrough**: [Watch the Demo Here](https://youtube.com/yourlink)
-
 ### OpenEnv India Hackathon 2026 Submission
 
 ## Project Overview
+
 The Epistemic Agency Hub is a specialized reinforcement learning benchmark designed to evaluate an agent's ability to manage uncertainty through calibrated autonomy. Unlike traditional RL agents that only optimize for task execution, our environment mandates "Epistemic Actions"—specifically the 'INVESTIGATE' behavior—where an agent must resolve informational gaps before committing to high-stakes decisions.
 
 ## Core Framework: Investigate-then-Act
+
 The environment implements a calibration-first workflow:
+
 1. **Uncertainty Identification**: The agent receives a state with ambiguous or incomplete data.
 2. **Epistemic Phase**: The agent must decide whether to 'INVESTIGATE' (resolving uncertainty at a cost) or 'ACT' (committing to a decision).
 3. **Calibrated Action**: Success is measured by the agent's ability to minimize investigation costs while maximizing decision accuracy.
@@ -26,59 +26,71 @@ The environment implements a calibration-first workflow:
 ## Technical Implementation
 
 ### Environment and Agent Behavior
-*   **OpenEnv Compliance**: Fully compliant with the latest OpenEnv API specifications.
-*   **Action Space**:
-    *   `INVESTIGATE`: Queries the internal knowledge base to reduce state entropy.
-    *   `ACT`: Executes the final decision based on current belief state.
-    *   `RECOVER`: Error-handling mechanism for miscalibrated decisions.
-*   **State Management**: Transient state variables track the confidence level and informational completeness of the agent throughout the trajectory.
+
+- **OpenEnv Compliance**: Fully compliant with the latest OpenEnv API specifications.
+- **Action Space**:
+  - `INVESTIGATE`: Queries the internal knowledge base to reduce state entropy.
+  - `ACT`: Executes the final decision based on current belief state.
+  - `RECOVER`: Error-handling mechanism for miscalibrated decisions.
+- **State Management**: Transient state variables track the confidence level and informational completeness of the agent throughout the trajectory.
 
 ### Reward Model and Training
+
 We utilize a Group Relative Policy Optimization (GRPO) approach to calibrate the agent's decision-making logic:
-*   **Causal Merit Reward**: Rewards are distributed for successful investigation steps that directly lead to higher action accuracy.
-*   **Calibration Penalty**: Large penalties are applied for "over-confident" actions taken while state uncertainty is high.
-*   **Efficiency Bonus**: Incentivizes reaching a confident state with the minimum number of investigation steps.
+
+- **Causal Merit Reward**: Rewards are distributed for successful investigation steps that directly lead to higher action accuracy.
+- **Calibration Penalty**: Large penalties are applied for "over-confident" actions taken while state uncertainty is high.
+- **Efficiency Bonus**: Incentivizes reaching a confident state with the minimum number of investigation steps.
 
 ### Training Pipeline
+
 The training pipeline is designed for scalability and observability:
-*   **Real-Time Monitoring**: Integrated with the Midnight Pro Dashboard for live tracking of loss gradients and reward pulses.
-*   **Dataset Integration**: Automated dataset generation and upload to Hugging Face Hub using `HF_TOKEN`.
+
+- **Real-Time Monitoring**: Integrated with the Midnight Pro Dashboard for live tracking of loss gradients and reward pulses.
+- **Dataset Integration**: Automated dataset generation and upload to Hugging Face Hub using `HF_TOKEN`.
 
 ## Performance Analytics
 
 ## 📊 Analytical Results & Metrics
+
 The agent demonstrates clear convergence during the GRPO calibration phase. Logged metrics from the live Space training run include:
 
-| Metric | Baseline | Calibrated Agent (v2) | Improvement |
-| :--- | :--- | :--- | :--- |
-| **Epistemic Success Rate** | 64% | **92%** | +28% |
-| **Avg. Reward** | 0.42 | **0.87** | +107% |
-| **Risk Incidents** | 12 | **2** | -83% |
+| Metric                     | Baseline | Calibrated Agent (v2) | Improvement |
+| :------------------------- | :------- | :-------------------- | :---------- |
+| **Epistemic Success Rate** | 64%      | **92%**               | +28%        |
+| **Avg. Reward**            | 0.42     | **0.87**              | +107%       |
+| **Risk Incidents**         | 12       | **2**                 | -83%        |
 
-*Evidence of training (loss curves and reward pulses) is preserved in the **Logs** tab of the Hugging Face Space and within the [`trainer_state.json`](https://huggingface.co/JOY0021/autonomy-agent-v2/blob/main/trainer_state.json) metadata.*
+_Evidence of training (loss curves and reward pulses) is preserved in the **Logs** tab of the Hugging Face Space and within the [`trainer_state.json`](https://huggingface.co/JOY0021/autonomy-agent-v2/blob/main/trainer_state.json) metadata._
 
 ## 🏆 Hackathon Submission Details
+
 - **OpenEnv Standards**: Built on **OpenEnv Core v0.2.x** for strict client-server standardization.
 - **Hugging Face Space**: [Live Benchmark Hub](https://huggingface.co/spaces/JOY0021/autonomy-calibration-benchmark)
 - **Trained Model Weights**: [autonomy-agent-v2](https://huggingface.co/JOY0021/autonomy-agent-v2)
 - **Interactive Training Loop**: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Rhythm280/Autonomy-Calibration-Environment/blob/main/notebooks/training.ipynb) or [View on GitHub](notebooks/training.ipynb)
-- **🎥 YouTube Demo Video**: [Watch the Walkthrough Here](https://youtube.com/yourlink)
+- **📝 Technical Case Study**: [Detailed Blog Post](Blog.md)
 
 ## Deployment and Setup
+
 The environment is containerized using Docker for seamless deployment on Hugging Face Spaces.
 
 ### Local Development
+
 To run the dashboard locally:
+
 ```bash
 pip install -r requirements.txt
 uvicorn main:app --port 7860
 ```
 
 ### Building for Production
+
 ```bash
 docker build -t autonomy-calibration-hub .
 docker run -p 7860:7860 autonomy-calibration-hub
 ```
 
 ## License
+
 MIT License - OpenEnv India 2026.
