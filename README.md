@@ -54,10 +54,10 @@ The training pipeline is designed for scalability and observability:
 ## 📈 Training Evidence & Analytics
 Our agent demonstrates clear convergence during the GRPO calibration phase.
 
-![Training Evidence](training_curves.png)
+![Training Evidence](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/training_curves.jpg)
 _Evidence of the calibrated training loop: Policy Loss (left) vs. Episode Reward (right)._
 
-![Baseline Comparison](baseline_vs_trained.png)
+![Baseline Comparison](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/baseline_vs_trained.jpg)
 _Performance leap: The GRPO agent significantly outperforms both the 'Blind' and 'Smart' baselines._
 
 | Metric                     | Baseline | Calibrated Agent (v2) | Improvement |

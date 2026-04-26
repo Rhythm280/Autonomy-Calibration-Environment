@@ -269,10 +269,10 @@ For each episode:
 *(Fill in after running training notebook)*
 
 **Reward curve:**
-![Reward Curve](reward_curve.png)
+![Reward Curve](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/reward_curve.jpg)
 
 **Baseline vs Trained:**
-![Baseline vs Trained](baseline_vs_trained.png)
+![Baseline vs Trained](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/baseline_vs_trained.jpg)
 
 ---
 
@@ -319,7 +319,7 @@ This phase demonstrates the "Self-Calibrating" capability of the agent.
 4.  **Monitor Convergence**: 
     - Within 10-20 seconds, a **Live Metrics Chart** will fade in below the buttons. 
     - Watch the **Policy Loss** (Red) and **Mean Reward** (Green) update in real-time.
-    - ![Training Active](UI_Training_Active.png)
+    - ![Training Active](https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/UI_Training_Active.jpg)
 
 ### ☁️ Phase 4: Cloud & Hackathon Submission (Judge's Guide)
 This project is designed for 100% reproducibility in the cloud.
@@ -327,7 +327,7 @@ This project is designed for 100% reproducibility in the cloud.
 #### 1. Google Colab (One-Click Training)
 - Open the [Interactive Training Notebook](https://colab.research.google.com/github/Rhythm280/Autonomy-Calibration-Environment/blob/main/notebooks/training.ipynb).
 - Select `Runtime → Change runtime type → T4 GPU` and click **Run All**. 
-- The notebook will pull data from your **Hugging Face Space API**, train using **GRPO**, and download comparison plots (`baseline_vs_trained.png`).
+- The notebook will pull data from your **Hugging Face Space API**, train using **GRPO**, and download comparison plots (`https://raw.githubusercontent.com/Rhythm280/Autonomy-Calibration-Environment/main/baseline_vs_trained.jpg`).
 
 #### 2. Hugging Face Hub (Technical Evidence)
 - Visit the [Model Repository](https://huggingface.co/JOY0021/autonomy-agent-v2).
