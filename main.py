@@ -163,15 +163,20 @@ def state():
 # ─── API: Training ────────────────────────────────────────────────────────────
 
 def run_training():
-    """Runs the training script in a separate process."""
+    """Runs the training script in a separate process and pipes output to logs."""
     try:
-        # Use sys.executable to ensure we use the same python environment
-        cmd = [sys.executable, "scripts/train_rl.py"]
-        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        # We don't wait for completion here to avoid blocking the worker indefinitely
-        print("Training process launched in background.")
+        print("🚀 GRPO TRAINING CORE: Initializing...")
+        # Redirect stdout and stderr to the main process ones so they appear in HF Logs
+        process = subprocess.Popen(
+            [sys.executable, "scripts/train_rl.py"],
+            stdout=sys.stdout, 
+            stderr=sys.stderr,
+            bufsize=1, # Line buffered
+            universal_newlines=True
+        )
+        print(f"✅ Background process PID {process.pid} spawned.")
     except Exception as e:
-        print(f"Error during background training: {e}")
+        print(f"❌ Error during background training: {e}")
 
 @app.post("/api/train")
 def start_training(background_tasks: BackgroundTasks):
