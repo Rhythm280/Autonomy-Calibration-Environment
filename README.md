@@ -8,6 +8,10 @@ app_port: 7860
 ---
 
 # Epistemic Agency Hub: Autonomy Calibration Environment
+
+> [!TIP]
+> **🎥 YouTube Project Walkthrough**: [Watch the Demo Here](https://youtube.com/yourlink)
+
 ### OpenEnv India Hackathon 2026 Submission
 
 ## Project Overview
