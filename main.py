@@ -77,6 +77,7 @@ def _get_task(name: str):
 
 # ─── API: Reset ───────────────────────────────────────────────────────────────
 
+@app.post("/reset")
 @app.post("/api/reset", response_model=Observation)
 def reset(body: ResetRequest = ResetRequest()):
     try:
@@ -102,8 +103,9 @@ def reset(body: ResetRequest = ResetRequest()):
 
 # ─── API: Step ───────────────────────────────────────────────────────────────
 
+@app.post("/step")
 @app.post("/api/step", response_model=StepResult)
-def step(action: Action):
+async def step_env(action: Action):
     task = _session.get("task")
     if task is None or _session.get("done"):
         raise HTTPException(status_code=400, detail="No active episode. Call /api/reset first.")
