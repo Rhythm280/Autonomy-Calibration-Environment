@@ -55,7 +55,7 @@ The agent demonstrates clear convergence during the GRPO calibration phase. Logg
 | **Avg. Reward** | 0.42 | **0.87** | +107% |
 | **Risk Incidents** | 12 | **2** | -83% |
 
-*Evidence of training (loss curves and reward pulses) is preserved in the **Logs** tab of the Hugging Face Space and within the `autonomy-agent-v2` model metadata.*
+*Evidence of training (loss curves and reward pulses) is preserved in the **Logs** tab of the Hugging Face Space and within the [`trainer_state.json`](https://huggingface.co/JOY0021/autonomy-agent-v2/blob/main/trainer_state.json) metadata.*
 
 ## 🏆 Hackathon Submission Details
 - **OpenEnv Standards**: Built on **OpenEnv Core v0.2.x** for strict client-server standardization.
