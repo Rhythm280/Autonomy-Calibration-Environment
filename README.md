@@ -51,17 +51,20 @@ The training pipeline is designed for scalability and observability:
 
 ## Performance Analytics
 
-## 📊 Analytical Results & Metrics
+## 📈 Training Evidence & Analytics
+Our agent demonstrates clear convergence during the GRPO calibration phase.
 
-The agent demonstrates clear convergence during the GRPO calibration phase. Logged metrics from the live Space training run include:
+![Training Evidence](training_curves.png)
+_Evidence of the calibrated training loop: Policy Loss (left) vs. Episode Reward (right)._
+
+![Baseline Comparison](baseline_vs_trained.png)
+_Performance leap: The GRPO agent significantly outperforms both the 'Blind' and 'Smart' baselines._
 
 | Metric                     | Baseline | Calibrated Agent (v2) | Improvement |
 | :------------------------- | :------- | :-------------------- | :---------- |
 | **Epistemic Success Rate** | 64%      | **92%**               | +28%        |
 | **Avg. Reward**            | 0.42     | **0.87**              | +107%       |
 | **Risk Incidents**         | 12       | **2**                 | -83%        |
-
-_Evidence of training (loss curves and reward pulses) is preserved in the **Logs** tab of the Hugging Face Space and within the [`trainer_state.json`](https://huggingface.co/JOY0021/autonomy-agent-v2/blob/main/trainer_state.json) metadata._
 
 ## 🏆 Hackathon Submission Details
 

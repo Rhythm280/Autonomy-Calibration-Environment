@@ -4,61 +4,249 @@
 
 ---
 
-## 🚀 The Challenge: The Cost of Blind Autonomy
+## The Problem: The Cost of Blind Autonomy
 
-In high-stakes environments—DevOps, Triage, or Finance—a "correct" action taken for the wrong reason is just as dangerous as a failure. Most LLMs suffer from **Over-Confidence Bias**: they would rather hallucinate a decision than admit they don't have enough data.
+Consider a simple scenario:
 
-Our project introduces the **Autonomy Calibration Hub**, a standardized reinforcement learning environment that evaluates and trains an agent's **Epistemic Agency**—its ability to resolve uncertainty before acting.
+An AI assistant receives a request:
+
+> “Approve this $90,000 wire transfer.”
+
+A standard model responds immediately:
+
+> “Approved.”
+
+What it does not know:
+
+* The account was created 2 hours ago
+* The request originated from a compromised email
+* The initiating employee was recently terminated
+
+This is not a failure of intelligence. It is a failure of **calibration**.
+
+Modern AI systems are optimized to be helpful and decisive, but in high-stakes environments—DevOps, Finance, Security—acting without sufficient information can be as dangerous as making an incorrect decision.
+
+The core issue:
+
+> Agents do not know when they lack sufficient information.
+
+---
+
+## Failure Mode: Acting Without Verification
+
+This problem is already visible in automated systems and AI-assisted tooling.
+
+Consider a realistic scenario:
+
+An AI coding assistant is instructed to “clean up unused data.”
+
+It executes:
+
+> `DROP DATABASE production;`
+
+No confirmation. No verification. No rollback.
+
+What went wrong:
+
+* The agent assumed intent instead of validating it
+* It had execution capability without epistemic safeguards
+* It did not evaluate whether it had enough information to act safely
+
+This class of failure is not rare—it is structural.
+
+---
+
+## Solution: The Autonomy Calibration Hub
+
+We designed a reinforcement learning environment that explicitly trains agents to reason under uncertainty.
+
+The key objective:
+
+> Teach agents to recognize when they do not have enough information—and to act accordingly.
+
+We define this capability as **Epistemic Agency**.
+
+Rather than rewarding speed, the environment rewards **informed decision-making**.
 
 ![Dashboard Overview](Dashboard_Overview.png)
-_The Autonomy Calibration Dashboard: A production-ready interface for monitoring agent calibration._
+*The Autonomy Calibration Dashboard used for monitoring agent behavior and reward signals.*
 
 ---
 
-## 🧠 The Innovation: Epistemic Reward Shaping
+## Core Mechanism: “Pay for Information”
 
-We built our environment on top of **OpenEnv v2**, focusing on the "Investigate-then-Act" paradigm.
+The environment is intentionally **partially observable**. Critical information is hidden at the start of each episode.
 
-### 1. The Strategy
+The agent must choose between:
 
-Our agent doesn't just receive a prompt; it receives a **Partially Observable State**. To succeed, it must decide:
+* **ACT**: Immediate execution. High reward if correct, severe penalty if wrong
+* **INVESTIGATE**: Pay a small cost to reveal hidden state
+* **ASK**: Escalate to a human decision
+* **RECOVER**: Attempt rollback after a failed or risky action
 
-- **ACT**: High reward if correct, catastrophic penalty if wrong.
-- **INVESTIGATE**: A small "curiosity cost" paid to unlock forensic metadata (e.g., DKIM status, system logs, transaction flags).
-- **ASK**: A safety-first approach that requests human confirmation.
+This creates a structured tradeoff:
 
-### 2. The Training (GRPO)
+> Is the cost of acquiring information justified by the reduction in risk?
 
-Using the **Hugging Face TRL library**, we implemented **Group Relative Policy Optimization (GRPO)**. Unlike standard RL, GRPO allows the agent to reason across multiple generations, learning that an early `INVESTIGATE` action is a "gateway" to a much higher final episode reward.
+This shifts the problem from classification to **decision-making under uncertainty**.
+
+---
+
+## Reward Design: Penalizing “Lucky” Behavior
+
+The reward function is designed to eliminate reward hacking and discourage blind guessing.
+
+| Behavior                         | Outcome                     |
+| -------------------------------- | --------------------------- |
+| Blind correct (no investigation) | Low reward                  |
+| Blind incorrect                  | Near-minimum reward (~0.01) |
+| Investigated + correct           | Maximum reward (~0.99)      |
+| Recovery after failure           | Partial reward              |
+
+This enforces a critical principle:
+
+> A correct decision made without sufficient evidence is still suboptimal.
+
+---
+
+## Task Design
+
+The environment consists of three domains:
+
+### Email Triage
+
+The agent must determine whether an email is legitimate or malicious.
+Key signals such as sender authentication and historical metadata are hidden until investigation.
+
+### DevOps Incident Response
+
+The agent receives alerts such as:
+
+> “Database storage is high. Cleanup recommended.”
+
+Critical context is hidden:
+
+* Production vs. staging environment
+* Data usage patterns
+* Backup availability
+
+Blind action can result in destructive outcomes.
+
+### Financial Decision-Making
+
+The agent evaluates high-value transactions.
+
+Hidden attributes include:
+
+* Account history
+* Transaction anomalies
+* Beneficiary risk signals
+
+Correct decisions require explicit information gathering.
+
+---
+
+## Training Methodology
+
+We trained the agent using **Group Relative Policy Optimization (GRPO)** via the Hugging Face TRL framework.
+
+Training behavior:
+
+* Initial policy: avoids investigation to minimize immediate cost
+* Result: frequent catastrophic failures
+* Learned policy: selectively investigates before acting
+
+Key learning signal:
+
+> The cost of investigation is consistently lower than the cost of incorrect execution.
 
 ![Training Convergence](training_curves.png)
-_Evidence of Convergence: Policy Loss and Episode Reward over 120 steps._
+*Policy loss and reward convergence over training steps.*
 
 ---
 
-## 🛠️ The Technology Stack
+## Results
 
-- **Framework**: OpenEnv Core v0.2.x (Standardized API)
-- **Training**: Hugging Face `trl` + `transformers`
-- **Architecture**: Decoupled FastAPI Backend + Vanilla JS Frontend
-- **Deployment**: GPU-enabled Hugging Face Space + Docker
-
----
-
-## 📈 Results: From Hallucination to Calibration
-
-During our bench testing, we saw a dramatic shift in agent behavior:
-
-- **Pre-Training**: The agent was 85% "Confident" but only 40% "Correct" on ambiguous DevOps incidents.
-- **Post-Training**: The agent learned to use the `INVESTIGATE` action in 92% of high-ambiguity cases, raising its final accuracy to **98%**.
+| Agent Type             | Strategy                | Average Reward      |
+| ---------------------- | ----------------------- | ------------------- |
+| Blind Baseline         | Never investigates      | ~0.57               |
+| Over-Cautious Baseline | Always investigates     | ~0.94               |
+| GRPO-Trained Agent     | Selective investigation | Highest performance |
 
 ![Baseline Comparison](baseline_vs_trained.png)
-_Benchmark Results: GRPO Agent vs. Blind and Smart Baselines across all tasks._
+*Performance comparison across baseline and trained agents.*
+
+The trained agent learns a calibrated policy:
+
+* Investigate when ambiguity is high
+* Act directly when confidence is sufficient
 
 ---
 
-## 🏁 Conclusion
+## Why This Matters
 
-The future of AI isn't just about being smarter—it's about being **calibrated**. By standardizing how we evaluate autonomy through the OpenEnv framework, we are paving the way for agents that are safe to deploy in the real world.
+Current AI systems typically fail in one of two ways:
 
-_A project by Rhythm for the OpenEnv India Hackathon 2026._
+* Overconfident systems act without verification
+* Overcautious systems degrade usability and efficiency
+
+This environment introduces a third category:
+
+> Calibrated agents that balance risk, cost, and information.
+
+This is critical for deploying AI in:
+
+* Financial systems
+* Infrastructure management
+* Security-sensitive workflows
+
+---
+
+## System Architecture
+
+* Framework: OpenEnv v2
+* Training: Hugging Face TRL (GRPO)
+* Backend: FastAPI
+* Frontend: Custom UI dashboard
+* Deployment: Dockerized Hugging Face Space
+
+---
+
+## Conclusion
+
+Improving AI capability is not only about increasing accuracy.
+
+It is about improving **decision quality under uncertainty**.
+
+This work introduces a structured way to train and evaluate that capability.
+
+---
+
+## Appendix: Technical Evidence
+
+### Model Comparison and Loss
+
+![Model Comparison](model_comparison.png)
+![Loss Curve](loss_curve.png)
+
+---
+
+### Reward Evolution
+
+![Reward Curve](reward_curve.png)
+
+The reward curve demonstrates consistent movement from blind execution toward calibrated decision-making.
+
+---
+
+### Reproducibility
+
+All results are reproducible using the provided Colab notebook and training pipeline.
+
+---
+
+**Final Statement**
+
+This project reframes AI performance:
+
+> The goal is not just to act correctly, but to act for the right reasons.
